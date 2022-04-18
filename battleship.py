@@ -1,6 +1,5 @@
 import copy
 import random
-from time import sleep
 
 
 def create_map(length, height):
@@ -12,7 +11,7 @@ def create_map(length, height):
     return nmap
 
 
-def print_map(map_to_print):
+def print_map(map_to_print: list):
     for key, item in enumerate(map_to_print):
         print(' '.join(item))
 
@@ -22,17 +21,17 @@ def conditions(nmap, x, y, map_length, map_height, first, direction):
     Is the coordinate checked free of neighbors directly
     Parameters
     ----------
-    nmap
-    x
-    y
-    map_length
-    map_height
-    first
-    direction
+    nmap: map
+    x: position on x-axis
+    y: position on y-axis
+    map_length: length of the map
+    map_height: height of the map
+    first: We do want to check top or left neighbor only during the first iteration
+    direction: Either vertical or horizontal
 
     Returns
     -------
-    Bool
+    True if the boat could be on this coordinate.
 
     """
     check_left = True
@@ -166,8 +165,9 @@ def main():
     ships_list = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
     boat_list = []
     # Keep in mind that length and height start at 0, this is not the number of column or rows
-    map_length = 7
-    map_height = 7
+    # Map has to be at least 6x6 to work with the rules
+    map_length = 6
+    map_height = 6
     dir_list = []
     coord_list = []
     compt = 0
@@ -178,6 +178,10 @@ def main():
      state and just pop the last one each time we change a boat.
     """
     q = []
+
+    if map_height < 6 or map_length < 6:
+        print('Not possible')
+        return
 
     nmap = create_map(map_length, map_height)
     boat = max(ships_list)
@@ -224,7 +228,6 @@ def main():
                     boat = max(ships_list)
                     coord_list.clear()
                     nmap = q.pop()
-                    print_map(nmap)
                     ultimate_reset[boat] = 1 if boat not in ultimate_reset else ultimate_reset[boat] + 1
 
                     # Sometimes, the map is fucked up so we full reset.
@@ -234,12 +237,8 @@ def main():
                         nmap = create_map(map_length, map_height)
                         start_x = random.randint(0, map_length)
                         start_y = random.randint(0, map_height)
-                        boat_direction = random.choices(['V', 'H'])
                         boat_list.clear()
                         coord_list.clear()
-                        worked = try_to_draw(boat, start_x, start_y,
-                                                  boat_direction, nmap,
-                                                  map_length, map_height)
 
                 # Since we use the len of coord_list to know if we tried every coordinate
                 # possible we need to make sure that we don't append duplicate in the list.
