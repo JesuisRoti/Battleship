@@ -7,13 +7,13 @@ def create_map(length, height):
     for i in range(height + 1):
         nmap.append([])
         for j in range(length + 1):
-            nmap[i].append('o')
+            nmap[i].append("o")
     return nmap
 
 
 def print_map(map_to_print: list):
     for key, item in enumerate(map_to_print):
-        print(' '.join(item))
+        print(" ".join(item))
 
 
 def conditions(nmap, x, y, map_length, map_height, first, direction):
@@ -21,12 +21,12 @@ def conditions(nmap, x, y, map_length, map_height, first, direction):
     Is the coordinate checked free of neighbors directly
     Parameters
     ----------
-    nmap: map
+    nmap
     x: position on x-axis
     y: position on y-axis
     map_length: length of the map
     map_height: height of the map
-    first: We do want to check top or left neighbor only during the first iteration
+    first: Bool We do want to check top or left neighbor only during the first iteration
     direction: Either vertical or horizontal
 
     Returns
@@ -37,26 +37,26 @@ def conditions(nmap, x, y, map_length, map_height, first, direction):
     check_left = True
     check_top = True
 
-    if 'V' in direction and not first:
+    if "V" in direction and not first:
         check_top = False
-    if 'H' in direction and not first:
+    if "H" in direction and not first:
         check_left = False
 
     if y - 1 >= 0 and check_top:
         # Top
-        if nmap[y - 1][x] == 'X':
+        if nmap[y - 1][x] == "X":
             return False
     if y + 1 <= map_height:
         # bottom
-        if nmap[y + 1][x] == 'X':
+        if nmap[y + 1][x] == "X":
             return False
     if x - 1 >= 0 and check_left:
         # left
-        if nmap[y][x - 1] == 'X':
+        if nmap[y][x - 1] == "X":
             return False
     if x + 1 <= map_length:
         # right
-        if nmap[y][x + 1] == 'X':
+        if nmap[y][x + 1] == "X":
             return False
     return True
 
@@ -79,20 +79,20 @@ def diag_conditions(nmap, x, y, map_length, map_height):
     if y - 1 >= 0:
         # diag top right
         if x + 1 <= map_length:
-            if nmap[y - 1][x + 1] == 'X':
+            if nmap[y - 1][x + 1] == "X":
                 return False
         # diag top left
         if x - 1 >= 0:
-            if nmap[y - 1][x - 1] == 'X':
+            if nmap[y - 1][x - 1] == "X":
                 return False
     if y + 1 <= map_height:
         # diag bot right
         if x + 1 <= map_length:
-            if nmap[y + 1][x + 1] == 'X':
+            if nmap[y + 1][x + 1] == "X":
                 return False
         # diag bot left
         if x - 1 >= 0:
-            if nmap[y + 1][x - 1] == 'X':
+            if nmap[y + 1][x - 1] == "X":
                 return False
     return True
 
@@ -115,20 +115,32 @@ def try_to_draw(boat, x, y, direction, nmap, length, height):
     Bool
     """
     map_copy = nmap.copy()
-    if 'V' in direction:
+    if "V" in direction:
         for i in range(boat):
             try:
-                if nmap[y + i][x] == 'o' and diag_conditions(map_copy, x, y + i, length, height) and conditions(map_copy, x, y + i, length, height, i == 0, direction):
+                if (
+                    nmap[y + i][x] == "o"
+                    and diag_conditions(map_copy, x, y + i, length, height)
+                    and conditions(
+                        map_copy, x, y + i, length, height, i == 0, direction
+                    )
+                ):
                     pass
                 else:
                     return False
             except IndexError:
                 return False
         return True
-    if 'H' in direction:
+    if "H" in direction:
         for i in range(boat):
             try:
-                if nmap[y][x + i] == 'o' and diag_conditions(map_copy, x + i, y, length, height) and conditions(map_copy, x + i, y, length, height, i == 0, direction):
+                if (
+                    nmap[y][x + i] == "o"
+                    and diag_conditions(map_copy, x + i, y, length, height)
+                    and conditions(
+                        map_copy, x + i, y, length, height, i == 0, direction
+                    )
+                ):
                     pass
                 else:
                     return False
@@ -152,12 +164,12 @@ def draw_boat(boat, x, y, direction, nmap):
     -------
     map
     """
-    if 'V' in direction:
+    if "V" in direction:
         for i in range(boat):
-            nmap[y + i][x] = 'X'
+            nmap[y + i][x] = "X"
     else:
         for i in range(boat):
-            nmap[y][x + i] = 'X'
+            nmap[y][x + i] = "X"
     return nmap
 
 
@@ -180,14 +192,14 @@ def main():
     q = []
 
     if map_height < 6 or map_length < 6:
-        print('Not possible')
+        print("Not possible")
         return
 
     nmap = create_map(map_length, map_height)
     boat = max(ships_list)
     start_x = random.randint(0, map_length)
     start_y = random.randint(0, map_height)
-    boat_direction = random.choices(['V', 'H'])
+    boat_direction = random.choices(["V", "H"])
 
     while len(ships_list) != 0:
         worked = try_to_draw(
@@ -207,7 +219,7 @@ def main():
             # Change the direction of the boat
             if boat_direction not in dir_list:
                 dir_list.append(boat_direction)
-                boat_direction = ['V'] if boat_direction == ['H'] else ['H']
+                boat_direction = ["V"] if boat_direction == ["H"] else ["H"]
 
             # If the 2 directions has been tryied for this boat in this coord
             else:
@@ -215,7 +227,7 @@ def main():
                 # If every coord has been tried then change the boat
                 if len(coord_list) + 1 == (map_length + 1) * (map_height + 1):
                     if len(boat_list) <= 0:
-                        print('Not possible')
+                        print("Not possible")
                         return
 
                     """ 
@@ -228,7 +240,9 @@ def main():
                     boat = max(ships_list)
                     coord_list.clear()
                     nmap = q.pop()
-                    ultimate_reset[boat] = 1 if boat not in ultimate_reset else ultimate_reset[boat] + 1
+                    ultimate_reset[boat] = (
+                        1 if boat not in ultimate_reset else ultimate_reset[boat] + 1
+                    )
 
                     # Sometimes, the map is fucked up so we full reset.
                     if boat in ultimate_reset and ultimate_reset[boat] > 4:
@@ -248,7 +262,7 @@ def main():
 
                 if [start_x, start_y] not in coord_list:
                     coord_list.append([start_x, start_y])
-                boat_direction = random.choices(['V', 'H'])
+                boat_direction = random.choices(["V", "H"])
         compt += 1
 
     print(f"Every ships been placed in {compt} tries. \nHere is the map:")
